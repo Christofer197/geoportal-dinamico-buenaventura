@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Geoportal Buenaventura - Versión Moderna 2.0</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <!-- PWA META TAGS -->
+  <meta name="description" content="Análisis Territorial de Buenaventura - Geoportal Moderno">
+  <meta name="theme-color" content="#86efac">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Geoportal BVA">
+  
+  <!-- PWA MANIFEST -->
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- PWA ICONS -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192x192.png">
+  
+  <!-- VERSIÓN ACTUALIZADA 2.0 PWA - Si ves esto en el código fuente, la página está actualizada -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- INDICADOR DE VERSIÓN: Si ves este mensaje, estás usando la versión correcta -->
+<div style="display: none;">VERSIÓN 2.0 MODERNA - 2024</div>
+
+<!-- MAPA DE FONDO -->
+<div id="map"></div>
+
+<!-- BOTÓN HAMBURGUESA MÓVIL -->
+<button id="menu-toggle" class="menu-toggle" aria-label="Abrir menú">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<!-- OVERLAY PARA CERRAR MENÚ -->
+<div id="menu-overlay" class="menu-overlay"></div>
+
+<!-- PANEL LATERAL -->
+<aside id="sidebar" class="sidebar">
+  
+  <!-- Header del Panel -->
+  <div class="sidebar-header">
+    <div class="logo-container">
+      <span class="logo-icon">🗺️</span>
+      <div class="logo-text">
+        <h1>Geoportal</h1>
+        <p>Buenaventura</p>
+      </div>
+    </div>
+    <button id="close-menu" class="close-btn" aria-label="Cerrar menú">✕</button>
+  </div>
+
+  <!-- Buscador -->
+  <div class="search-section">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Buscar barrio..." autocomplete="off">
+    </div>
+    <div id="search-results" class="search-results"></div>
+  </div>
+
+  <!-- Información del Barrio Seleccionado -->
+  <div id="barrio-info" class="info-panel" style="display: none;">
+    <div class="info-header">
+      <h3 id="barrio-name"></h3>
+      <button id="clear-selection" class="btn-clear">✕ Limpiar</button>
+    </div>
+    <div id="barrio-stats" class="info-content"></div>
+  </div>
+
+  <!-- Información de Distancias -->
+  <div id="distance-info" class="info-panel distance-panel" style="display: none;">
+    <div class="info-header">
+      <h3>📍 Distancias</h3>
+      <button id="clear-distance" class="btn-clear">✕ Limpiar</button>
+    </div>
+    <div id="distance-stats" class="info-content"></div>
+  </div>
+
+  <!-- Contenedor de Capas -->
+  <div class="layers-section">
+    <h2 class="section-title">Capas del Mapa</h2>
+    <div id="layers" class="layers-container"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <p>© 2024 Edinson Christofer Angulo</p>
+    <p class="footer-subtitle">Análisis Territorial</p>
+  </div>
+
+</aside>
+
+<!-- CONTROLES DEL MAPA (Parte Superior Derecha) -->
+<div class="map-controls top-right">
+  
+  <!-- Mensaje de Estado -->
+  <div id="status" class="status-badge">
+    <span class="status-icon">⏳</span>
+    <span class="status-text">Inicializando...</span>
+  </div>
+
+  <!-- Controles de Zoom -->
+  <div class="zoom-controls">
+    <button id="zoom-in" class="zoom-btn" aria-label="Acercar" title="Acercar">+</button>
+    <button id="zoom-out" class="zoom-btn" aria-label="Alejar" title="Alejar">−</button>
+  </div>
+
+</div>
+
+<!-- SELECTOR DE MAPAS BASE (Parte Izquierda Vertical) -->
+<div id="basemap-selector" class="basemap-selector">
+  <button class="basemap-btn active" data-basemap="osm" title="OpenStreetMap">
+    <span class="basemap-icon osm"></span>
+    <span class="basemap-label">OSM</span>
+  </button>
+  <button class="basemap-btn" data-basemap="satellite" title="Google Satélite">
+    <span class="basemap-icon satellite"></span>
+    <span class="basemap-label">G. Satélite</span>
+  </button>
+  <button class="basemap-btn" data-basemap="carto" title="Carto Light">
+    <span class="basemap-icon carto"></span>
+    <span class="basemap-label">C. Light</span>
+  </button>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="script.js"></script>
+
+<!-- PWA SERVICE WORKER REGISTRATION -->
+<script>
+  // Registrar Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+          console.log('✅ Service Worker registrado correctamente:', registration.scope);
+          
+          // Verificar actualizaciones cada 30 segundos
+          setInterval(() => {
+            registration.update();
+          }, 30000);
+        })
+        .catch(error => {
+          console.log('❌ Error al registrar Service Worker:', error);
+        });
+    });
+  }
+
+  // Manejar evento de instalación de la PWA
+  let deferredPrompt;
+  const installButton = document.createElement('button');
+  installButton.id = 'install-button';
+  installButton.innerHTML = '📱 Instalar App';
+  installButton.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #86efac, #fef08a);
+    color: #1e293b;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+    display: none;
+    animation: slideUp 0.4s ease-out;
+  `;
+
+  // Agregar animación
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+    }
+    #install-button:hover {
+      transform: translateX(-50%) scale(1.05);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+    #install-button:active {
+      transform: translateX(-50%) scale(0.95);
+    }
+  `;
+  document.head.appendChild(style);
+  document.body.appendChild(installButton);
+
+  // Capturar el evento beforeinstallprompt
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installButton.style.display = 'block';
+  });
+
+  // Manejar click en el botón de instalación
+  installButton.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      console.log('✅ Usuario aceptó instalar la PWA');
+    } else {
+      console.log('❌ Usuario rechazó instalar la PWA');
+    }
+    
+    deferredPrompt = null;
+    installButton.style.display = 'none';
+  });
+
+  // Ocultar botón si la app ya está instalada
+  window.addEventListener('appinstalled', () => {
+    console.log('✅ PWA instalada correctamente');
+    installButton.style.display = 'none';
+    deferredPrompt = null;
+  });
+
+  // Verificar si ya está en modo standalone
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    console.log('✅ App ejecutándose en modo standalone');
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vista Previa - Iconos PWA</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 40px;
+      font-size: 16px;
+    }
+    .icons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    .icon-card {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 16px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .icon-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border-color: #86efac;
+    }
+    .icon-card img {
+      width: 100%;
+      max-width: 150px;
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .icon-size {
+      font-weight: bold;
+      color: #333;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+    .icon-dimensions {
+      color: #666;
+      font-size: 14px;
+    }
+    .info-box {
+      background: linear-gradient(135deg, #86efac, #fef08a);
+      border-radius: 16px;
+      padding: 30px;
+      margin-top: 40px;
+    }
+    .info-box h2 {
+      color: #1e293b;
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+    .info-box ul {
+      list-style: none;
+      padding: 0;
+    }
+    .info-box li {
+      color: #1e293b;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      font-size: 15px;
+    }
+    .info-box li:last-child {
+      border-bottom: none;
+    }
+    .info-box li strong {
+      font-weight: 700;
+    }
+    .badge {
+      display: inline-block;
+      background: #10b981;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      .icons-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Iconos PWA Generados</h1>
+    <p class="subtitle">Geoportal Buenaventura - Análisis Territorial</p>
+    
+    <div class="icons-grid">
+      <div class="icon-card">
+        <img src="icon-72x72.png" alt="Icono 72x72">
+        <div class="icon-size">72x72</div>
+        <div class="icon-dimensions">Muy pequeño</div>
+      </div>
+      
+      <div class="icon-card">
+        <img src="icon-96x96.png" alt="Icono 96x96">
+        <div class="icon-size">96x96</div>
+        <div class="icon-dimensions">Pequeño</div>
+      </div>
+      
+      <div class="icon-card">
+        <img src="icon-128x128.png" alt="Icono 128x128">
+        <div class="icon-size">128x128</div>
+        <div class="icon-dimensions">Mediano pequeño</div>
+      </div>
+      
+      <div class="icon-card">
+        <img src="icon-144x144.png" alt="Icono 144x144">
+        <div class="icon-size">144x144</div>
+        <div class="icon-dimensions">Mediano</div>
+      </div>
+      
+      <div class="icon-card">
+        <img src="icon-152x152.png" alt="Icono 152x152">
+        <div class="icon-size">152x152</div>
+        <div class="icon-dimensions">iOS estándar</div>
+      </div>
+      
+      <div class="icon-card">
+        <img src="icon-192x192.png" alt="Icono 192x192">
+        <div class="icon-size">192x192 <span class="badge">PRINCIPAL</span></div>
+        <div class="icon-dimensions">Android estándar</div>
+      </div>
+      
+      <div class="icon-card">
+        <img src="icon-384x384.png" alt="Icono 384x384">
+        <div class="icon-size">384x384</div>
+        <div class="icon-dimensions">Alta resolución</div>
+      </div>
+      
+      <div class="icon-card">
+        <img src="icon-512x512.png" alt="Icono 512x512">
+        <div class="icon-size">512x512 <span class="badge">SPLASH</span></div>
+        <div class="icon-dimensions">Pantalla de carga</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <h2>📱 Información de los Iconos</h2>
+      <ul>
+        <li><strong>Total de iconos generados:</strong> 8 tamaños diferentes</li>
+        <li><strong>Formato:</strong> PNG con transparencia y degradado</li>
+        <li><strong>Colores:</strong> Verde (#86efac) y Amarillo (#fef08a)</li>
+        <li><strong>Diseño:</strong> Pin de ubicación con gradiente diagonal</li>
+        <li><strong>Compatibilidad:</strong> Android, iOS, Windows, Mac, Linux</li>
+        <li><strong>Icono principal:</strong> 192x192 (usado en pantalla de inicio)</li>
+        <li><strong>Splash screen:</strong> 512x512 (pantalla de carga)</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

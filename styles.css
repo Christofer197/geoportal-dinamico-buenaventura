@@ -1,0 +1,792 @@
+/* ============================================================================
+   GEOPORTAL BUENAVENTURA - DISEÑO MODERNO 2.0
+   Fuente: Poppins | Colores: Verde y Amarillo Claro
+   ============================================================================ */
+
+:root {
+  --primary-green: #86efac;
+  --primary-yellow: #fef08a;
+  --dark-green: #65a30d;
+  --dark-yellow: #ca8a04;
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --bg-white: #ffffff;
+  --bg-light: #f8fafc;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --sidebar-width: 380px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  background: var(--bg-light);
+}
+
+/* ============================================================================
+   MAPA
+   ============================================================================ */
+
+#map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-yellow) 100%);
+}
+
+.leaflet-control-zoom {
+  display: none !important;
+}
+
+/* ============================================================================
+   BOTÓN HAMBURGUESA (MÓVIL)
+   ============================================================================ */
+
+.menu-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-yellow));
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-toggle span {
+  width: 24px;
+  height: 3px;
+  background: var(--text-dark);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.menu-toggle.active span:nth-child(1) {
+  transform: rotate(45deg) translate(7px, 7px);
+}
+
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* Overlay */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 99;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ============================================================================
+   SIDEBAR (PANEL LATERAL)
+   ============================================================================ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--bg-white);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-header {
+  padding: 24px;
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-yellow));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 36px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.logo-text h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.logo-text p {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dark);
+  opacity: 0.8;
+}
+
+.close-btn {
+  display: none;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 24px;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: rotate(90deg);
+}
+
+/* ============================================================================
+   BÚSQUEDA
+   ============================================================================ */
+
+.search-section {
+  padding: 20px;
+  background: var(--bg-light);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 18px;
+  opacity: 0.6;
+}
+
+#search-input {
+  width: 100%;
+  padding: 14px 14px 14px 46px;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  color: var(--text-dark);
+  background: white;
+  transition: all 0.3s ease;
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: var(--dark-green);
+  box-shadow: 0 0 0 3px rgba(134, 239, 172, 0.2);
+}
+
+.search-results {
+  margin-top: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  display: none;
+}
+
+.search-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-results::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.search-result-item {
+  padding: 14px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dark);
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background: linear-gradient(90deg, #f0fdf4 0%, #fef9c3 100%);
+  padding-left: 24px;
+  color: var(--dark-green);
+}
+
+/* ============================================================================
+   PANELES DE INFORMACIÓN
+   ============================================================================ */
+
+.info-panel {
+  margin: 16px 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, #ecfccb 0%, #fef9c3 100%);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--dark-green);
+}
+
+.distance-panel {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-left-color: var(--dark-yellow);
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.info-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.btn-clear {
+  padding: 6px 12px;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-clear:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-item, .distance-item {
+  padding: 10px 12px;
+  background: white;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dark);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.info-item:hover, .distance-item:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.info-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 2px solid rgba(0, 0, 0, 0.08);
+}
+
+.info-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+/* ============================================================================
+   CAPAS DEL MAPA
+   ============================================================================ */
+
+.layers-section {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.layers-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.layers-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.layers-section::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+
+.layers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.layer-category {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.layer-category-title {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-yellow));
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+.layer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: white;
+  border: 2px solid #f1f5f9;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 8px;
+}
+
+.layer-item:hover {
+  border-color: var(--dark-green);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.layer-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--dark-green);
+}
+
+.layer-icon {
+  font-size: 20px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.layer-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.layer-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid #e2e8f0;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+
+.sidebar-footer {
+  padding: 16px 20px;
+  background: var(--bg-light);
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.sidebar-footer p {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.footer-subtitle {
+  margin-top: 4px;
+  font-weight: 600;
+  color: var(--dark-green);
+}
+
+/* ============================================================================
+   CONTROLES DEL MAPA (Superior Derecha)
+   ============================================================================ */
+
+.map-controls {
+  position: fixed;
+  z-index: 50;
+}
+
+.map-controls.top-right {
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.status-badge {
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  border: 2px solid rgba(134, 239, 172, 0.3);
+  max-width: 280px;
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-icon {
+  font-size: 16px;
+}
+
+.zoom-controls {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  border: 2px solid rgba(134, 239, 172, 0.3);
+}
+
+.zoom-btn {
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom-btn:last-child {
+  border-bottom: none;
+}
+
+.zoom-btn:hover {
+  background: linear-gradient(135deg, #f0fdf4, #fef9c3);
+  color: var(--dark-green);
+}
+
+.zoom-btn:active {
+  transform: scale(0.9);
+}
+
+/* ============================================================================
+   SELECTOR DE MAPAS BASE (Parte Inferior Derecha Vertical)
+   ============================================================================ */
+
+.basemap-selector {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 2px solid rgba(134, 239, 172, 0.3);
+  animation: slideInRight 0.4s ease-out 0.2s backwards;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.basemap-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 8px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 60px;
+}
+
+.basemap-btn:hover {
+  border-color: var(--dark-green);
+  transform: translateX(-6px);
+  box-shadow: var(--shadow-md);
+}
+
+.basemap-btn.active {
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-yellow));
+  border-color: var(--dark-green);
+  box-shadow: var(--shadow-md);
+  transform: translateX(-4px);
+}
+
+.basemap-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.basemap-btn.active .basemap-icon {
+  transform: scale(1.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.basemap-icon.osm {
+  background: linear-gradient(135deg, #7ebc89 0%, #f4a460 100%);
+}
+
+.basemap-icon.satellite {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+}
+
+.basemap-icon.carto {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+}
+
+.basemap-label {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  text-align: center;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+/* ============================================================================
+   RESPONSIVE - MÓVILES
+   ============================================================================ */
+
+@media screen and (max-width: 768px) {
+  
+  /* Mostrar botón hamburguesa */
+  .menu-toggle {
+    display: flex;
+  }
+  
+  /* Mostrar botón cerrar en sidebar */
+  .close-btn {
+    display: flex;
+  }
+  
+  /* Sidebar oculto por defecto */
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  /* Sidebar visible cuando está abierto */
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  /* Ajustar ancho del sidebar */
+  .sidebar {
+    width: 85vw;
+    max-width: 360px;
+  }
+  
+  /* Ajustar controles superiores */
+  .map-controls.top-right {
+    top: 90px;
+    right: 12px;
+  }
+  
+  .status-badge {
+    max-width: 200px;
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+  
+  /* Selector de mapas en móvil - MANTENER A LA DERECHA */
+  .basemap-selector {
+    right: 10px; /* Mantener a la derecha en móviles */
+    bottom: 15px;
+    padding: 4px;
+    gap: 4px;
+  }
+  
+  .basemap-btn {
+    min-width: 50px;
+    padding: 6px 6px;
+    gap: 2px;
+  }
+  
+  .basemap-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .basemap-label {
+    font-size: 7px;
+  }
+  
+  /* Ajustar zoom */
+  .zoom-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  
+  .sidebar {
+    width: 90vw;
+  }
+  
+  .basemap-selector {
+    right: 8px; /* Mantener a la derecha */
+    bottom: 12px;
+    padding: 4px;
+    gap: 3px;
+  }
+  
+  .basemap-btn {
+    min-width: 46px;
+    padding: 5px 5px;
+  }
+  
+  .basemap-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .basemap-label {
+    font-size: 6.5px;
+    letter-spacing: 0.1px;
+  }
+}
